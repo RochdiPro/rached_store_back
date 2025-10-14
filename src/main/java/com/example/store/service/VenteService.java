@@ -8,6 +8,8 @@ import com.example.store.repository.ClientRepository;
 import com.example.store.repository.ProduitVenduRepository;
 import com.example.store.repository.VenteRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -45,16 +47,34 @@ public class VenteService {
         vente.setClient(clt);
         Vente retVente = venteRepository.save(vente);
 
-        if (retVente != null) {
+        if (retVente != null && retVente.getProduits() != null) {
+            List<ProduitDetail> liste = new ArrayList<>();
+
             for (ProduitVendu pr : retVente.getProduits()) {
                 pr.setVente(retVente);
-                Produit produit =  produitService.getProduitById(UUID.fromString(pr.getId_produit())).orElse(null);
+                Produit produit = produitService.getProduitById(UUID.fromString(pr.getId_produit())).orElse(null);
                 pr.setProduit(produit);
-                produitService.venteStock(produit.getId(),pr.getQuantite());
+
+                // Mise à jour du stock
+                produitService.venteStock(produit.getId(), pr.getQuantite());
                 produitVenduRepository.save(pr);
+
+                // 🔹 Création du ProduitDetail pour chaque produit vendu
+                ProduitDetail produitDetail = new ProduitDetail();
+                produitDetail.setProduit(produit);
+                produitDetail.setImei1(pr.getImei());
+                produitDetail.setImei2(pr.getImei2());
+                produitDetail.setNumSerie(pr.getNumero_serie());
+                produitDetail.setClientId(clt.getId()); // ✅ Association au client
+                produitDetail.setEtat("VENDU"); // optionnel, si tu veux marquer l’état
+                liste.add(produitDetail);
             }
+
+            // 🔹 Enregistrement des détails produits (IMEIs, num séries…)
+            produitService.venteDetailProduit(liste);
         }
-        return venteRepository.save(vente);
+
+        return retVente;
     }
 /*
     public Vente updateVente(UUID id, Vente vente) {

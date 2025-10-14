@@ -24,9 +24,10 @@ public class InventaireService {
 
     // ---------------- Mouvement Stock ----------------
     public MouvementStock createMouvementStock(MouvementStock mvt) {
-        Produit produit = produitRepo.findById(mvt.getProduit().getId())
+        Produit produit = produitRepo.findById(UUID.fromString(mvt.getId_produit()))
                 .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
 
+        mvt.setProduit(produit);
         Integer stockAvant = produit.getStockActuel();
         Integer stockApres = stockAvant;
 
@@ -54,12 +55,12 @@ public class InventaireService {
 
     // ---------------- Mouvement Solde ----------------
     public MouvementSoldeAvance createMouvementSoldeAvance(MouvementSoldeAvance mvt) {
-        Client client = clientRepo.findById(mvt.getClient().getId())
+        Client client = clientRepo.findById(UUID.fromString(mvt.getId_client()))
                 .orElseThrow(() -> new RuntimeException("Client non trouvé"));
 
         double soldeAvant = client.getSoldeAvance();
         double soldeApres = soldeAvant;
-
+        mvt.setClient(client);
         switch (mvt.getTypeMouvement()) {
             case "ajout": soldeApres += mvt.getMontant(); break;
             case "utilisation": soldeApres -= mvt.getMontant(); break;

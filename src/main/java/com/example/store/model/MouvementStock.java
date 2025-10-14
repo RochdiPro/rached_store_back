@@ -25,6 +25,8 @@ public class MouvementStock {
     @JoinColumn(name = "produit_id", nullable = false)
     private Produit produit;
 
+    private String id_produit;
+
     @Column(name = "type_mouvement", nullable = false)
     private String typeMouvement; // sortie, retour, correction
 
@@ -50,7 +52,6 @@ public class MouvementStock {
     @Column(name = "date_mouvement", nullable = false)
     private LocalDate dateMouvement;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDate createdAt ;
+     private LocalDate createdAt ;
 }
 

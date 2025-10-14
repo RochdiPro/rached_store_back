@@ -25,6 +25,9 @@ public class MouvementSoldeAvance {
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 
+    private String id_client;
+
+
     @Column(name = "type_mouvement", nullable = false)
     private String typeMouvement; // ajout, utilisation, correction
 
@@ -50,6 +53,5 @@ public class MouvementSoldeAvance {
     @Column(name = "date_mouvement", nullable = false)
     private LocalDate dateMouvement ;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDate createdAt ;
+     private LocalDate createdAt ;
 }

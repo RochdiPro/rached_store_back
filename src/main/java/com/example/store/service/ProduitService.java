@@ -6,6 +6,7 @@ import com.example.store.model.Produit;
 import com.example.store.model.ProduitDetail;
 import com.example.store.repository.ProduitDetailRepository;
 import com.example.store.repository.ProduitRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -44,16 +45,18 @@ public class ProduitService {
 
             // Conversion des détails
             if (produit.getDetails() != null) {
-                List<ProduitDetailDTO> detailsDTO = produit.getDetails().stream().map(detail -> {
-                    ProduitDetailDTO d = new ProduitDetailDTO();
-
-                    d.setImei1(detail.getImei1());
-                    d.setImei2(detail.getImei2());
-                    d.setNumSerie(detail.getNumSerie());
-                    d.setEtat(detail.getEtat());
-                    d.setCouleur(detail.getCouleur());
-                    return d;
-                }).collect(Collectors.toList());
+                List<ProduitDetailDTO> detailsDTO = produit.getDetails().stream()
+                        .filter(detail -> !"VENDU".equalsIgnoreCase(detail.getEtat()) && detail.getClientId() == null)
+                        .map(detail -> {
+                            ProduitDetailDTO d = new ProduitDetailDTO();
+                            d.setImei1(detail.getImei1());
+                            d.setImei2(detail.getImei2());
+                            d.setNumSerie(detail.getNumSerie());
+                            d.setEtat(detail.getEtat());
+                            d.setCouleur(detail.getCouleur());
+                            return d;
+                        })
+                        .collect(Collectors.toList());
 
                 dto.setDetails(detailsDTO);
             }
@@ -76,9 +79,7 @@ public class ProduitService {
             produit.setMarque(updatedProduit.getMarque());
             produit.setCategorie(updatedProduit.getCategorie());
             produit.setCodeBarre(updatedProduit.getCodeBarre());
-           /* produit.setImei1(updatedProduit.getImei1());
-            produit.setImei2(updatedProduit.getImei2());
-            produit.setNumSerie(updatedProduit.getNumSerie());*/
+
             produit.setPrixAchat(updatedProduit.getPrixAchat());
             produit.setPrixVente(updatedProduit.getPrixVente());
             produit.setTva(updatedProduit.getTva());
@@ -87,8 +88,7 @@ public class ProduitService {
             produit.setStockAlerte(updatedProduit.getStockAlerte());
             produit.setNote(updatedProduit.getNote());
             produit.setDescription(updatedProduit.getDescription());
-        //    produit.setCouleur(updatedProduit.getCouleur());
-         //   produit.setCaracteristiques(updatedProduit.getCaracteristiques());
+
             produit.setImageUrl(updatedProduit.getImageUrl());
             produit.setUpdatedAt(updatedProduit.getUpdatedAt());
             return produitRepository.save(produit);
@@ -129,4 +129,29 @@ public class ProduitService {
     public void addDetailProduit(List<ProduitDetail> liste){
         produitDetailRepository.saveAll(liste);
     }
+
+    @Transactional
+    public void venteDetailProduit(List<ProduitDetail> liste) {
+        for (ProduitDetail detail : liste) {
+            List<ProduitDetail> existingList = produitDetailRepository
+                    .findByImei1AndImei2AndNumSerie(
+                            detail.getImei1(),
+                            detail.getImei2(),
+                            detail.getNumSerie()
+                    );
+
+            if (!existingList.isEmpty()) {
+                // Mettre à jour tous les éléments trouvés
+                for (ProduitDetail pd : existingList) {
+                    pd.setClientId(detail.getClientId());
+                    pd.setEtat(detail.getEtat());
+                    pd.setCouleur(detail.getCouleur());
+                }
+                produitDetailRepository.saveAll(existingList);
+            } else {
+                produitDetailRepository.save(detail);
+            }
+        }
+    }
+
 }

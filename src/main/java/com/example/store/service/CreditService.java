@@ -2,14 +2,8 @@ package com.example.store.service;
 
 
 
-import com.example.store.model.CreditClient;
-import com.example.store.model.CreditFournisseur;
-import com.example.store.model.PaiementClient;
-import com.example.store.model.PaiementCreditFournisseur;
-import com.example.store.repository.CreditClientRepository;
-import com.example.store.repository.CreditFournisseurRepository;
-import com.example.store.repository.PaiementClientRepository;
-import com.example.store.repository.PaiementFournisseurRepository;
+import com.example.store.model.*;
+import com.example.store.repository.*;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
@@ -20,22 +14,31 @@ public class CreditService {
     private final CreditFournisseurRepository creditFournisseurRepo;
     private final PaiementClientRepository paiementClientRepo;
     private final PaiementFournisseurRepository paiementFournisseurRepo;
+    private final ClientRepository clientRepo;
+    private final FournisseurRepository fournisseurRepo;
 
-    public CreditService(CreditClientRepository ccr,
-                         CreditFournisseurRepository cfr,
-                         PaiementClientRepository pcr,
-                         PaiementFournisseurRepository pfr) {
-        this.creditClientRepo = ccr;
-        this.creditFournisseurRepo = cfr;
-        this.paiementClientRepo = pcr;
-        this.paiementFournisseurRepo = pfr;
+    public CreditService(CreditClientRepository creditClientRepo, CreditFournisseurRepository creditFournisseurRepo, PaiementClientRepository paiementClientRepo, PaiementFournisseurRepository paiementFournisseurRepo, ClientRepository clientRepo, FournisseurRepository fournisseurRepo) {
+        this.creditClientRepo = creditClientRepo;
+        this.creditFournisseurRepo = creditFournisseurRepo;
+        this.paiementClientRepo = paiementClientRepo;
+        this.paiementFournisseurRepo = paiementFournisseurRepo;
+        this.clientRepo = clientRepo;
+        this.fournisseurRepo = fournisseurRepo;
     }
 
     // --- CRUD Client ---
     public List<CreditClient> getCreditsClient() { return creditClientRepo.findAll(); }
-    public CreditClient createCreditClient(CreditClient credit) { return creditClientRepo.save(credit); }
+    public CreditClient createCreditClient(CreditClient credit) {
+        Client client  = clientRepo.findById(UUID.fromString(credit.getId_client()))
+                .orElseThrow(() -> new RuntimeException("client non trouvé"));
+        credit.setClient(client);
+        return creditClientRepo.save(credit);
+    }
     public CreditClient updateCreditClient(UUID id, CreditClient credit) {
         credit.setId(id);
+        Client client  = clientRepo.findById(UUID.fromString(credit.getId_client()))
+                .orElseThrow(() -> new RuntimeException("client non trouvé"));
+        credit.setClient(client);
         return creditClientRepo.save(credit);
     }
     public void deleteCreditClient(String id) { creditClientRepo.deleteById(id); }
@@ -52,7 +55,12 @@ public class CreditService {
 
     // --- CRUD Fournisseur ---
     public List<CreditFournisseur> getCreditsFournisseur() { return creditFournisseurRepo.findAll(); }
-    public CreditFournisseur createCreditFournisseur(CreditFournisseur credit) { return creditFournisseurRepo.save(credit); }
+    public CreditFournisseur createCreditFournisseur(CreditFournisseur credit) {
+        Fournisseur fournisseur  = fournisseurRepo.findById(UUID.fromString(credit.getId_fournisseur()))
+                .orElseThrow(() -> new RuntimeException("fournisseur non trouvé"));
+        credit.setFournisseur(fournisseur);
+        return creditFournisseurRepo.save(credit);
+    }
     public CreditFournisseur updateCreditFournisseur(UUID id, CreditFournisseur credit) {
         credit.setId(id);
         return creditFournisseurRepo.save(credit);

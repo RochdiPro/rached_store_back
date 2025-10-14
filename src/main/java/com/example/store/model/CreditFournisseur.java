@@ -24,6 +24,7 @@ public class CreditFournisseur {
     @JoinColumn(name = "fournisseur_id", nullable = false)
     private Fournisseur fournisseur;
 
+    private String id_fournisseur ;
     private Double montant;
     private Double montantRestant;
 

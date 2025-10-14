@@ -34,5 +34,10 @@ public class ProduitVendu {
     private String id_produit;
     private String id_vente;
     private String id_client ;
+
+    private String imei;
+    private String imei2;
+    private String numero_serie;
+    private String id_fornisseur;
 }
 

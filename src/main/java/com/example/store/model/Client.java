@@ -28,6 +28,8 @@ public class Client {
     @Column(nullable = false)
     private String nom;
 
+
+
     private String prenom;
     private String raisonSociale;
     private String cin;

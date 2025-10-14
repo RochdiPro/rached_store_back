@@ -25,6 +25,8 @@ public class CreditClient  {
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 
+    private String id_client ;
+
     private Double montant;
     private Double montantRestant;
 

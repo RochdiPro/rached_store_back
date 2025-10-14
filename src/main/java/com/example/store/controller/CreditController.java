@@ -22,7 +22,9 @@ public class CreditController {
     public List<CreditClient> getCreditsClient() { return creditService.getCreditsClient(); }
 
     @PostMapping("/clients")
-    public CreditClient createCreditClient(@RequestBody CreditClient credit) { return creditService.createCreditClient(credit); }
+    public CreditClient createCreditClient(@RequestBody CreditClient credit) {
+        return creditService.createCreditClient(credit);
+    }
 
     @PutMapping("/clients/{id}")
     public CreditClient updateCreditClient(@PathVariable UUID id, @RequestBody CreditClient credit) {
