@@ -15,8 +15,8 @@ import java.util.UUID;
 public class VenteDTO {
 
     private UUID id;
-    private Client client;
-    private Utilisateur utilisateur;
+    private ClientDTO client;
+   // private Utilisateur utilisateur;
     private LocalDate date = LocalDate.now();
     private String modePaiement ;
     private Double totalHt = 0.0;

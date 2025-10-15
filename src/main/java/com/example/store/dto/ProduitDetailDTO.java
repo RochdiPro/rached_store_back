@@ -20,6 +20,9 @@ public class ProduitDetailDTO {
     private UUID fournisseur;
     private String etat ;
     private String couleur ;
+    private String nom;
+    private String categorie;
+    private String marque ;
 
 
 }

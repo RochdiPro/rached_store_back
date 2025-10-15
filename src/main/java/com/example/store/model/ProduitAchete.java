@@ -33,6 +33,9 @@ public class ProduitAchete {
     private String imei;
     private String imei2;
     private String numero_serie;
+    private String nom;
+    private String categorie;
+    private String marque ;
 
     private String id_produit ;
     private String id_fornisseur;

@@ -22,7 +22,10 @@ public class ProduitDetail {
     private UUID fournisseur;
     private String etat ;
     private String couleur ;
-    // 🔗 Relation ManyToOne
+    private String nom ;
+    private String marque ;
+    private String categorie ;
+
     @ManyToOne
     @JoinColumn(name = "produit_id", nullable = false)
     private Produit produit;

@@ -1,5 +1,6 @@
 package com.example.store.service;
 
+import com.example.store.dto.ClientDTO;
 import com.example.store.dto.ProduitDTO;
 import com.example.store.dto.ProduitVenduDTO;
 import com.example.store.dto.VenteDTO;
@@ -30,8 +31,8 @@ public class VenteService {
     }
 
     public List<VenteDTO> getAllVentes() {
-        return venteRepository.findAll()
-                .stream()
+        List<Vente> ventes = venteRepository.findAll();
+        return ventes.stream()
                 .map(this::convertToDTO)
                 .toList();
     }
@@ -54,7 +55,9 @@ public class VenteService {
                 pr.setVente(retVente);
                 Produit produit = produitService.getProduitById(UUID.fromString(pr.getId_produit())).orElse(null);
                 pr.setProduit(produit);
-
+                pr.setNom(produit.getNom());
+                pr.setCategorie(produit.getCategorie());
+                pr.setMarque(produit.getMarque());
                 // Mise à jour du stock
                 produitService.venteStock(produit.getId(), pr.getQuantite());
                 produitVenduRepository.save(pr);
@@ -67,7 +70,11 @@ public class VenteService {
                 produitDetail.setNumSerie(pr.getNumero_serie());
                 produitDetail.setClientId(clt.getId()); // ✅ Association au client
                 produitDetail.setEtat("VENDU"); // optionnel, si tu veux marquer l’état
+                produitDetail.setNom(produit.getNom());
+                produitDetail.setMarque(produit.getMarque());
+                produitDetail.setCategorie(produit.getCategorie());
                 liste.add(produitDetail);
+
             }
 
             // 🔹 Enregistrement des détails produits (IMEIs, num séries…)
@@ -90,24 +97,11 @@ public class VenteService {
         venteRepository.deleteById(id);
     }
 
-    public VenteDTO convertToDTO(Vente vente) {
+    private VenteDTO convertToDTO(Vente vente) {
         VenteDTO dto = new VenteDTO();
         dto.setId(vente.getId());
-
-        if (vente.getClient() != null) {
-            Client client = new Client();
-            client.setId(vente.getClient().getId());
-            client.setNom(vente.getClient().getNom());
-            dto.setClient(client);;
-        }
-
-        if (vente.getUtilisateur() != null) {
-            Utilisateur utilisateur = new Utilisateur();
-            utilisateur.setId(vente.getUtilisateur().getId());
-            utilisateur.setNom(vente.getUtilisateur().getNom());
-            dto.setUtilisateur(utilisateur);
-        }
-
+        dto.setClient(clienttoDTO(vente.getClient()));
+        //dto.setUtilisateur(vente.getUtilisateur());
         dto.setDate(vente.getDate());
         dto.setModePaiement(vente.getModePaiement());
         dto.setTotalHt(vente.getTotalHt());
@@ -115,36 +109,53 @@ public class VenteService {
         dto.setCreatedAt(vente.getCreatedAt());
         dto.setUpdatedAt(vente.getUpdatedAt());
 
-        // Conversion des produits vendus
-        if (vente.getProduits() != null) {
-            List<ProduitVenduDTO> produitsDTO = vente.getProduits().stream().map(p -> {
-                ProduitVenduDTO pDto = new ProduitVenduDTO();
-                pDto.setId(p.getId());
 
-                // Produit simplifié
-                if (p.getProduit() != null) {
-                    ProduitDTO produitDTO = new ProduitDTO();
-                    produitDTO.setId(p.getProduit().getId());
-                    produitDTO.setNom(p.getProduit().getNom());
-                    produitDTO.setMarque(p.getProduit().getMarque());
-                    produitDTO.setCategorie(p.getProduit().getCategorie());
-                    produitDTO.setPrixVente(p.getProduit().getPrixVente());
-                    produitDTO.setTva(p.getProduit().getTva());
-                    produitDTO.setStockActuel(p.getProduit().getStockActuel());
-                    produitDTO.setImageUrl(p.getProduit().getImageUrl());
-                    pDto.setProduit(produitDTO);
-                }
-
-                pDto.setQuantite(p.getQuantite());
-                pDto.setPrixUnitaire(p.getPrixUnitaire());
-                pDto.setTva(p.getTva());
-                pDto.setTotalLigne(p.getTotalLigne());
-                return pDto;
-            }).collect(Collectors.toList());
-            dto.setProduits(produitsDTO);
-        }
-
+        dto.setProduits(mapProduits(vente.getProduits()));
         return dto;
     }
 
+    private List<ProduitVenduDTO> mapProduits(List<ProduitVendu> produits) {
+        if (produits == null) return new ArrayList<>();
+        return produits.stream().map(this::mapProduit).toList();
+    }
+
+    private ProduitVenduDTO mapProduit(ProduitVendu prod) {
+        ProduitVenduDTO dto = new ProduitVenduDTO();
+        dto.setQuantite(prod.getQuantite());
+        dto.setPrixUnitaire(prod.getPrixUnitaire());
+        dto.setTva(prod.getTva());
+        dto.setTotalLigne(prod.getTotalLigne());
+        dto.setImei(prod.getImei());
+        dto.setImei2(prod.getImei2());
+        dto.setNumero_serie(prod.getNumero_serie());
+        dto.setNom(prod.getNom());
+        dto.setCategorie(prod.getCategorie());
+        dto.setMarque(prod.getMarque());
+        return dto;
+    }
+
+
+
+    ClientDTO clienttoDTO(Client client) {
+        if (client == null) return null;
+
+        ClientDTO dto = new ClientDTO();
+        dto.setId(client.getId());
+        dto.setType(client.getType());
+        dto.setNom(client.getNom());
+        dto.setPrenom(client.getPrenom());
+        dto.setRaisonSociale(client.getRaisonSociale());
+        dto.setCin(client.getCin());
+        dto.setNumFiscal(client.getNumFiscal());
+        dto.setTel(client.getTel());
+        dto.setEmail(client.getEmail());
+        dto.setAdresse(client.getAdresse());
+        dto.setPointsFidelite(client.getPointsFidelite());
+        dto.setCredit(client.getCredit());
+        dto.setSoldeAvance(client.getSoldeAvance());
+        dto.setCreatedAt(client.getCreatedAt());
+        dto.setUpdatedAt(client.getUpdatedAt());
+
+        return dto;
+    }
 }

@@ -31,13 +31,16 @@ public class Vente {
     @JoinColumn(name = "utilisateur_id")
     private Utilisateur utilisateur;
     private LocalDate date = LocalDate.now();
+
     private String modePaiement = "espece";
     private Double totalHt = 0.0;
     private Double totalTtc = 0.0;
+
     @Column(name = "created_at")
     private LocalDate createdAt ;
     @Column(name = "updated_at")
     private LocalDate updatedAt ;
+
     @OneToMany(mappedBy = "vente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProduitVendu> produits = new ArrayList<>();
 
