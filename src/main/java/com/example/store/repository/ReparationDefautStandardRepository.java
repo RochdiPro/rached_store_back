@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface ReparationDefautStandardRepository extends JpaRepository<ReparationDefautStandard, UUID> {
-    List<ReparationDefautStandard> findByReparationId(UUID reparationId);
+    List<ReparationDefautStandard> findByReparationId(long reparationId);
 }

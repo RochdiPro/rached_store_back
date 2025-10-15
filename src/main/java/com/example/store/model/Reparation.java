@@ -19,11 +19,13 @@ public class Reparation {
 
     @Id
     @GeneratedValue
-    private UUID id;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
+
+    private String  id_client;
 
     @Column(nullable = false)
     private String defaut;
@@ -40,8 +42,7 @@ public class Reparation {
     @Column(nullable = false)
     private String statut = "en_attente";
 
-    @Column(name = "code_reparation", unique = true)
-    private String codeReparation;
+
 
     @ManyToOne
     @JoinColumn(name = "defaut_standard_id") // pour migration éventuelle
@@ -59,4 +60,6 @@ public class Reparation {
     private LocalDate createdAt ;
 
     private LocalDate updatedAt ;
+
+
 }

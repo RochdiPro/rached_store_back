@@ -35,7 +35,10 @@ public class CreditController {
     public void deleteCreditClient(@PathVariable String id) { creditService.deleteCreditClient(id); }
 
     @PostMapping("/clients/paiements")
-    public PaiementClient addPaiementClient(@RequestBody PaiementClient paiement) { return creditService.addPaiementClient(paiement); }
+    public PaiementClient addPaiementClient(@RequestBody PaiementClient paiement) {
+        int t =1 ;
+        return creditService.addPaiementClient(paiement);
+    }
 
     // --- mêmes endpoints pour fournisseurs ---
     @GetMapping("/fournisseurs")

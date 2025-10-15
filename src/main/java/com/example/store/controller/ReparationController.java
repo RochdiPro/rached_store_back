@@ -1,5 +1,6 @@
 package com.example.store.controller;
 
+import com.example.store.dto.ReparationDTO;
 import com.example.store.model.Reparation;
 import com.example.store.model.ReparationDefautStandard;
 import com.example.store.model.ReparationPiece;
@@ -25,45 +26,45 @@ public class ReparationController {
     }
 
     @GetMapping("/{id}")
-    public Reparation getById(@PathVariable UUID id) {
+    public Reparation getById(@PathVariable long id) {
         return service.getById(id);
     }
 
     @PostMapping
-    public Reparation create(@RequestBody Reparation reparation) {
+    public Reparation create(@RequestBody ReparationDTO reparation) {
         return service.create(reparation);
     }
 
     @PutMapping("/{id}")
-    public Reparation update(@PathVariable UUID id, @RequestBody Reparation reparation) {
+    public Reparation update(@PathVariable long id, @RequestBody Reparation reparation) {
         return service.update(id, reparation);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID id) {
+    public void delete(@PathVariable long id) {
         service.delete(id);
     }
 
     // Pièces
     @PostMapping("/{reparationId}/pieces")
-    public ReparationPiece addPiece(@PathVariable UUID reparationId, @RequestBody ReparationPiece piece) {
+    public ReparationPiece addPiece(@PathVariable long reparationId, @RequestBody ReparationPiece piece) {
         piece.setReparation(service.getById(reparationId));
         return service.addPiece(piece);
     }
 
     @GetMapping("/{reparationId}/pieces")
-    public List<ReparationPiece> getPieces(@PathVariable UUID reparationId) {
+    public List<ReparationPiece> getPieces(@PathVariable Long reparationId) {
         return service.getPiecesByReparation(reparationId);
     }
 
     // Défauts standards liés
     @PostMapping("/{reparationId}/defauts-standard/{defautId}")
-    public ReparationDefautStandard addDefaut(@PathVariable UUID reparationId, @PathVariable UUID defautId) {
+    public ReparationDefautStandard addDefaut(@PathVariable long reparationId, @PathVariable UUID defautId) {
         return service.addDefautStandardToReparation(reparationId, defautId);
     }
 
     @GetMapping("/{reparationId}/defauts-standard")
-    public List<ReparationDefautStandard> getDefauts(@PathVariable UUID reparationId) {
+    public List<ReparationDefautStandard> getDefauts(@PathVariable long reparationId) {
         return service.getDefautsByReparation(reparationId);
     }
 }

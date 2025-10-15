@@ -8,7 +8,7 @@ import java.util.UUID;
 import java.util.List;
 
 @Repository
-public interface ReparationRepository extends JpaRepository<Reparation, UUID> {
+public interface ReparationRepository extends JpaRepository<Reparation, Long> {
     List<Reparation> findByClientId(UUID clientId);
-    List<Reparation> findByCodeReparationContainingIgnoreCase(String code);
+    //List<Reparation> findByCodeReparationContainingIgnoreCase(String code);
 }

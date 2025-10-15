@@ -18,7 +18,7 @@ public class PaiementClient  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "credit_id")
@@ -27,4 +27,6 @@ public class PaiementClient  {
     private double montant;
     private String modePaiement; // espece / carte / autre
     private LocalDate datePaiement;
+
+    private String id_credit;
 }

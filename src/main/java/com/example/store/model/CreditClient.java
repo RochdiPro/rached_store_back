@@ -36,10 +36,10 @@ public class CreditClient  {
     private String statut = "en_cours";
 
     @Column(name = "created_at")
-    private Instant createdAt = Instant.now();
+    private LocalDate createdAt ;
 
     @Column(name = "updated_at")
-    private Instant updatedAt = Instant.now();
+    private LocalDate updatedAt ;
 
     @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL)
     private List<PaiementClient> paiements;

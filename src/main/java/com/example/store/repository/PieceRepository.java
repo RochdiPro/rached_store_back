@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface PieceRepository extends JpaRepository<ReparationPiece, UUID> {
-    List<ReparationPiece> findByReparationId(UUID reparationId);
+    List<ReparationPiece> findByReparationId(long reparationId);
 }
