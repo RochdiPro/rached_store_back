@@ -8,6 +8,7 @@ import com.example.store.service.VenteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -77,4 +78,16 @@ public class VenteController {
         produitVenduService.deleteProduitVendu(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/jour")
+    public List<VenteDTO> getVentesJour(@RequestParam String date) {
+        return venteService.getVentesByDate(LocalDate.parse(date));
+    }
+
+    @GetMapping("/mois")
+    public List<VenteDTO> getVentesDepuis(@RequestParam String fromDate) {
+        return venteService.getVentesFromDate(LocalDate.parse(fromDate));
+    }
+
+
 }

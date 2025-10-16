@@ -46,5 +46,10 @@ public class PaiementTelecom {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt = OffsetDateTime.now();
+
+     private LocalDate dateDebut ;
+
+     private LocalDate dateFin ;
+
 }
 

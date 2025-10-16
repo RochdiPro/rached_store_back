@@ -67,4 +67,15 @@ public class ProduitController {
         Produit updated = produitService.updateStock(id, nouveauStock);
         return ResponseEntity.ok(updated);
     }
+
+    @GetMapping("/count")
+    public Map<String, Long> getCount() {
+        return produitService.getTotalProduits();
+    }
+
+    @GetMapping("/stock-critique")
+    public Map<String, Long> getStockCritique() {
+        return produitService.getStockCritique();
+    }
+
 }

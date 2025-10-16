@@ -1,5 +1,7 @@
 package com.example.store.service;
 
+import com.example.store.dto.MovementStockDTO;
+import com.example.store.dto.ProduitDTO;
 import com.example.store.model.Client;
 import com.example.store.model.MouvementSoldeAvance;
 import com.example.store.model.MouvementStock;
@@ -23,7 +25,7 @@ public class InventaireService {
     private final ClientRepository clientRepo;
 
     // ---------------- Mouvement Stock ----------------
-    public MouvementStock createMouvementStock(MouvementStock mvt) {
+    public MovementStockDTO createMouvementStock(MouvementStock mvt) {
         Produit produit = produitRepo.findById(UUID.fromString(mvt.getId_produit()))
                 .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
 
@@ -44,13 +46,23 @@ public class InventaireService {
 
         produit.setStockActuel(stockApres);
         produitRepo.save(produit);
-
-        return stockRepo.save(mvt);
+           MouvementStock SAVED =  stockRepo.save(mvt);
+        return toDto(SAVED);
     }
+    public boolean deleteMouvementStock(UUID id) {
+        if (stockRepo.existsById(id)) {
+            stockRepo.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+    public List<MovementStockDTO> getMouvementsStock(UUID produitId) {
+        List<MouvementStock> mouvements =
+                (produitId != null) ? stockRepo.findByProduitId(produitId) : stockRepo.findAll();
 
-    public List<MouvementStock> getMouvementsStock(UUID produitId) {
-        if (produitId != null) return stockRepo.findByProduitId(produitId);
-        return stockRepo.findAll();
+        return mouvements.stream()
+                .map(this::toDto)
+                .toList();
     }
 
     // ---------------- Mouvement Solde ----------------
@@ -81,5 +93,39 @@ public class InventaireService {
     public List<MouvementSoldeAvance> getMouvementsSoldeAvance(UUID clientId) {
         if (clientId != null) return soldeRepo.findByClientId(clientId);
         return soldeRepo.findAll();
+    }
+
+
+
+
+
+
+
+
+
+    private MovementStockDTO toDto(MouvementStock entity) {
+        MovementStockDTO dto = new MovementStockDTO();
+        dto.setId(entity.getId());
+
+        // Produit (si tu veux un sous-DTO simplifié)
+        if (entity.getProduit() != null) {
+            ProduitDTO produitDTO = new ProduitDTO();
+            produitDTO.setId(entity.getProduit().getId());
+            produitDTO.setNom(entity.getProduit().getNom());
+            produitDTO.setCodeBarre(entity.getProduit().getCodeBarre());
+            dto.setProduit(produitDTO);
+        }
+
+        dto.setId_produit(entity.getId_produit());
+        dto.setTypeMouvement(entity.getTypeMouvement());
+        dto.setQuantite(entity.getQuantite());
+        dto.setStockAvant(entity.getStockAvant());
+        dto.setStockApres(entity.getStockApres());
+        dto.setMotif(entity.getMotif());
+        dto.setReference(entity.getReference());
+        dto.setDateMouvement(entity.getDateMouvement());
+        dto.setCreatedAt(entity.getCreatedAt());
+
+        return dto;
     }
 }

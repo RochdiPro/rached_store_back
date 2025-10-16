@@ -96,4 +96,14 @@ public class CreditService {
         creditFournisseurRepo.save(credit);
         return paiementFournisseurRepo.save(paiement);
     }
+
+    public List<CreditFournisseur> getCreditsClientsNonPayes() {
+        return creditFournisseurRepo.findByStatutNot("paye");
+    }
+
+
+    // Crédits fournisseurs non payés
+    public List<CreditFournisseur> getCreditsFournisseursNonPayes() {
+        return creditFournisseurRepo.findByStatutNot("paye");
+    }
 }

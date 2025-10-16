@@ -10,6 +10,7 @@ import com.example.store.repository.ProduitVenduRepository;
 import com.example.store.repository.VenteRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -93,6 +94,23 @@ public class VenteService {
         return venteRepository.save(existingVente);
     }
 */
+
+    public List<VenteDTO> getVentesByDate(LocalDate date) {
+
+        List<Vente> ventes = venteRepository.findByDate(date);
+        return ventes.stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
+
+    public List<VenteDTO> getVentesFromDate(LocalDate fromDate) {
+
+        List<Vente> ventes = venteRepository.findByDateGreaterThanEqual(fromDate);
+        return ventes.stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
+
     public void deleteVente(UUID id) {
         venteRepository.deleteById(id);
     }

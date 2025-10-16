@@ -1,6 +1,7 @@
 package com.example.store.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
@@ -53,5 +54,10 @@ public class Produit {
     // 🔗 Relation OneToMany
     @OneToMany(mappedBy = "produit", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProduitDetail> details;
+
+    @OneToMany(mappedBy = "produit")
+    @JsonIgnore // ⬅️ empêche Jackson de reboucler
+    private List<MouvementStock> mouvements;
+
 }
 

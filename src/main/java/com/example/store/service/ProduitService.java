@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -152,6 +153,14 @@ public class ProduitService {
                 produitDetailRepository.save(detail);
             }
         }
+    }
+
+    public Map<String, Long> getTotalProduits() {
+        return Map.of("count", produitRepository.countProduits());
+    }
+
+    public Map<String, Long> getStockCritique() {
+        return Map.of("count", produitRepository.countStockCritique());
     }
 
 }
